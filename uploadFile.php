@@ -10,6 +10,7 @@ if(is_array($_FILES)) {
     $imageType = $sourceProperties[2];
 
     // $imageType = exif_imagetype($file)
+    include_once('img_lib.php');
 
     // $targetPath = "images/".$_FILES['userImage']['name'];
     if($imageType == IMAGETYPE_JPEG){
@@ -29,10 +30,13 @@ if(is_array($_FILES)) {
         // exit;
     }
     
-    move_uploaded_file($file, $folderPath. $fileNewName. ".". $ext);
-    echo "Image Resize Successfully.";
+    if(move_uploaded_file($file, $folderPath. $fileNewName. ".". $ext)){
+        $response = [
+            'status' => '1'
+        ];
+        echo json_encode($response);
+    }
 
-    include_once('img_lib.php');
     $targetFile = $folderPath.$fileNewName."_res.".$ext;
     $thumbnail = "images/thumb_".$fileNewName.".".$ext;
     $wthumb = 150;
@@ -43,25 +47,5 @@ if(is_array($_FILES)) {
 
     }
 }
-
-function imageResize($imageResourceId,$width,$height) {
-    $imgWidth = $width;
-    $imgHeight = $height;
-    $resizeHeight = 300;
-    $divideFactor = $imgHeight / $resizeHeight ;
-    $resizeWidth = $imgWidth / $divideFactor;
-
-    // $targetWidth =300;
-    // $targetHeight =300;
-
-    $targetWidth = $resizeWidth;
-    $targetHeight = $resizeHeight;
-
-
-    $targetLayer=imagecreatetruecolor($targetWidth,$targetHeight);
-    imagecopyresampled($targetLayer,$imageResourceId,0,0,0,0,$targetWidth,$targetHeight, $width,$height);
-
-
-    return $targetLayer;
-}   
+  
 ?>
